@@ -224,8 +224,7 @@
       <ul class="info">
           <li><a href="./build/<?php echo $_SESSION['entry-point']; ?>">&diams; Build: ./build/<?php echo $_SESSION['entry-point']; ?></a></li>
           <li>&diams; Max-size: <?php echo $_SESSION['size']; ?></li>
-          <li>&diams; Images-files: </li>
-          <li>&diams; Compile Type: </li>
+          <li>&diams; Compile Type: <?php echo $_SESSION['compile-type']; ?></li>
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
 
       </ul>
