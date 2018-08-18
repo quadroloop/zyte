@@ -2,14 +2,14 @@
    // zyte
   // web application copiler
 
-  // get configutration
-  $cfile
 
   $req = array("app.html","main.html","app.js","app.css","zyte.config");
   $file_missing = array();
   $missing = 0;
   $found = 0;
   $errors = array();
+  $configx = array();
+
 
   $dir = new DirectoryIterator(dirname(__FILE__));
   foreach ($dir as $fileinfo) {
@@ -23,56 +23,62 @@
     } 
 }
 
-  if($missing != 0 && $found != sizeof($req)){
-        	array_push($errors, "ERROR! dev files are missing!");
-        	foreach ($req as $rfiles) {
-        	array_push($errors, "ERROR! Missing file: ".$rfiles);
-        	}
-        }else{
-        	compile();
-        }
+  // if($missing != 0 && $found != sizeof($req)){
+  //       	array_push($errors, "ERROR! dev files are missing!");
+  //       	foreach ($req as $rfiles) {
+  //       	array_push($errors, "ERROR! Missing file: ".$rfiles);
+  //       	}
+  //       }else{
+  //       	compile();
+  //       }
+
+   compile();
  
+
  function compile(){
- 	 // create build folder if it doesnt exist
- 	 if(!is_dir('build')){
- 	 	mkdir('build');
- 	 }
+   // get configuration file
+   $cfile = 'zyte.config';
+      foreach(file($cfile) as $line){
+           $d1 = str_replace(" ", "", $line);
+           $d2 = str_replace("\n", "", $d1);
+           $d3 = str_replace(";", "", $d2);
+           $d4 = explode(":", $d3);
+               $configx[$d4[0]] = $d4[1];
+      }
 
- 	 if(is_dir("build")){
- 	 	// compile main.html --> index.html
- 	 	$m = file_get_contents('main.html');
- 	 	    $css = '"./src/app.css"';
- 	 	    $js = '"./src/app.js"';
- 	 	    $rel='"stylesheet"';
- 	 	    // $m0 = str_replace("</head>", "\n<link rel=".$rel." href=".$css.">\n</head>", $m);
- 	 	    $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
- 	 	    file_put_contents("./build/index.html", $m1);
- 	 }
+  
+ 	 // if(!is_dir('build')){
+ 	 // 	mkdir('build');
+ 	 // }
+
+ 	 // if(is_dir("build")){
+ 	 // 	$m = file_get_contents('main.html');
+ 	 // 	    $css = '"./src/app.css"';
+ 	 // 	    $js = '"./src/app.js"';
+ 	 // 	    $rel='"stylesheet"';
+ 	 // 	    $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
+ 	 // 	    file_put_contents("./build/index.html", $m1);
+ 	 // }
  
-        //compile app.css --> app.css
-       $appcss = file_get_contents('app.css');
-           if(!is_dir("./build/src")){
-             mkdir("./build/src");
-           }
-           $appcss0 = preg_replace('/\s+/S', " ", $appcss);
-           // file_put_contents("./build/src/app.css", $appcss0);
+   //     $appcss = file_get_contents('app.css');
+   //         if(!is_dir("./build/src")){
+   //           mkdir("./build/src");
+   //         }
+   //         $appcss0 = preg_replace('/\s+/S', " ", $appcss);
 
-           // full js-css compile;
-           $css_js0 = str_replace("'", '"', $appcss0);
-           $css_js1 = "<style>".$css_js0."</style>";
+   //         $css_js0 = str_replace("'", '"', $appcss0);
+   //         $css_js1 = "<style>".$css_js0."</style>";
    
-        // compile app.js 
-       $appjs = file_get_contents('app.js');
-           $appbody = file_get_contents('app.html');
-           $appbody0 = str_replace("'", "&apos;", $appbody);
-           $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
-           $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
-           $appjs1 = $appbody2.$appjs;    
-           // preg_replace('/\s+/S', " ", $appjs);
-           file_put_contents("./build/src/app.js", $appjs1);
-    $message = "Compile Successfully!";
+   //     $appjs = file_get_contents('app.js');
+   //         $appbody = file_get_contents('app.html');
+   //         $appbody0 = str_replace("'", "&apos;", $appbody);
+   //         $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
+   //         $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
+   //         $appjs1 = $appbody2.$appjs;    
+   //         file_put_contents("./build/src/app.js", $appjs1);
+   //  $message = "Compile Successfully!";
+
   }
-      //work on assets
       
 ?>
 <html>
@@ -211,7 +217,7 @@
       <div class="row">
     <div class="col-4"><h3>Project Info</h3>
       <ul class="info">
-          <li>&diams; Build: <a href=""></a></li>
+          <li>&diams; Build: ./build<?php echo $configx['entry-point']; ?><a href=""></a></li>
           <li>&diams; Max-size: </li>
           <li>&diams; Images-files: </li>
           <li>&diams; Compile Type: </li>
@@ -221,8 +227,15 @@
     </div>
 
     <div class="col-4"><h3>Config <button class="btn" onclick="updateConfig();">Update</button></h3>
-      <textarea id="config"></textarea>
-    </div>
+    
+         <?php
+           echo '<textarea id="config">';
+            if(file_exists('zyte.config')){
+              echo file_get_contents('zyte.config');
+            }
+            echo '</textarea>'; 
+         ?>
+          </div>
 
     <div class="col-4"><h3>Console</h3>
      
@@ -246,7 +259,7 @@
      <div class="mobile-dashboard">
          <h2>Project data</h2>
           <ul class="info">
-          <li><h3>&diams; Build: <a href=""></a></h3></li>
+          <li><h3>&diams; Build: ./build/<a href=""></a></h3></li>
           <li><h3>&diams; Max-size: </h3></li>
           <li><h3>&diams; Images-files: </h3></li>
           <li><h3>&diams; Compile Type: </h3></li>
