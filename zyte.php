@@ -1,14 +1,14 @@
 <?php
    // zyte
   // web application copiler
-
+ session_start();
 
   $req = array("app.html","main.html","app.js","app.css","zyte.config");
   $file_missing = array();
   $missing = 0;
   $found = 0;
   $errors = array();
-  $configx = array();
+  $config = array();
 
 
   $dir = new DirectoryIterator(dirname(__FILE__));
@@ -43,10 +43,14 @@
            $d2 = str_replace("\n", "", $d1);
            $d3 = str_replace(";", "", $d2);
            $d4 = explode(":", $d3);
-               $configx[$d4[0]] = $d4[1];
+           $d5 = str_replace("\r", "", $d4);
+               $config[$d5[0]] = $d5[1];
       }
-
-  
+    $_SESSION['entry-point'] = $config['entry-point'];
+    $_SESSION['size'] = $config['size'];
+    $_SESSION['compile-type'] = $config['compile-type'];
+     
+   
  	 // if(!is_dir('build')){
  	 // 	mkdir('build');
  	 // }
@@ -77,6 +81,7 @@
    //         $appjs1 = $appbody2.$appjs;    
    //         file_put_contents("./build/src/app.js", $appjs1);
    //  $message = "Compile Successfully!";
+    
 
   }
       
@@ -217,8 +222,8 @@
       <div class="row">
     <div class="col-4"><h3>Project Info</h3>
       <ul class="info">
-          <li>&diams; Build: ./build<?php echo $configx['entry-point']; ?><a href=""></a></li>
-          <li>&diams; Max-size: </li>
+          <li><a href="./build/<?php echo $_SESSION['entry-point']; ?>">&diams; Build: ./build/<?php echo $_SESSION['entry-point']; ?></a></li>
+          <li>&diams; Max-size: <?php echo $_SESSION['size']; ?></li>
           <li>&diams; Images-files: </li>
           <li>&diams; Compile Type: </li>
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
