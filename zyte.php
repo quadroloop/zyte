@@ -69,16 +69,15 @@
             $js = '"./'.$config['src'].'/app.js"';
             $rel='"stylesheet"';
             $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
-            file_put_contents("./build/index.html", $m1);
+            file_put_contents("./build/".$config['entry-point'], $m1);
      }
  
        $appcss = file_get_contents('app.css');
            if(!is_dir("./build/".$config['src'])){
              mkdir("./build/".$config['src']);
            }
-           
-           $appcss0 = preg_replace('/\s+/S', " ", $appcss);
 
+           $appcss0 = preg_replace('/\s+/S', " ", $appcss);
            $css_js0 = str_replace("'", '"', $appcss0);
            $css_js1 = "<style>".$css_js0."</style>";
    
