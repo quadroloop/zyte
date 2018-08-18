@@ -52,6 +52,24 @@
 
  
 
+ // check build size
+ function app_size() {
+   if(is_dir('build')){
+    $size = 0;
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator('build')) as $file) {
+        $size += $file->getSize();
+    }
+    return $size;
+  }else{
+    return 0;
+  }
+}
+
+if(app_size() > $config['entry-point']) {
+   array_push($errors, "Error! the App size, is larger than target size");
+}
+
+// compile 
  function compile(){
 
      
@@ -63,14 +81,8 @@
    // html parsing 
    if($config['compile-type'] == 'html'){
 
-       if(is_dir("build")){
-        $m = file_get_contents('main.html');
-            $css = '"./'.$config['src'].'/app.css"';
-            $js = '"./'.$config['src'].'/app.js"';
-            $rel='"stylesheet"';
-            $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
-            file_put_contents("./build/".$config['entry-point'], $m1);
-     }
+   //     if(is_dir("build")){
+   // }
  
        $appcss = file_get_contents('app.css');
            if(!is_dir("./build/".$config['src'])){
@@ -78,16 +90,20 @@
            }
 
            $appcss0 = preg_replace('/\s+/S', " ", $appcss);
+
            $css_js0 = str_replace("'", '"', $appcss0);
            $css_js1 = "<style>".$css_js0."</style>";
    
        $appjs = file_get_contents('app.js');
            $appbody = file_get_contents('app.html');
-           $appbody0 = str_replace("'", "&apos;", $appbody);
-           $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
-           $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
-           $appjs1 = $appbody2.$appjs;    
-           file_put_contents("./build/".$config['src']."/app.js", $appjs1);
+           $appbody0 = preg_replace('/\s+/S', " ", $appbody);
+
+        $m = file_get_contents('main.html');
+            $css0 = str_replace('</head>', $css_js1.'</head>', $m);
+            $m1 = str_replace("</body>", "</body>\n<script>".$appjs."</script>",$css0);
+            $app_total = str_replace('</div>', $appbody0.'</div>', $m1);
+            file_put_contents("./build/".$config['entry-point'], $app_total);
+               
     $message = "Compile Successfully!";
        
    }
@@ -284,6 +300,7 @@
       <ul class="info">
           <li><a href="./build/<?php echo $_SESSION['entry-point']; ?>">&diams; Build: ./build/<?php echo $_SESSION['entry-point']; ?></a></li>
           <li>&diams; Max-size: <?php echo $_SESSION['size']; ?></li>
+          <li>&diams; App-size: <?php echo app_size(); ?></li>
           <li>&diams; Compile Type: <?php echo $_SESSION['compile-type']; ?></li>
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
 
@@ -325,12 +342,11 @@
      <div class="mobile-dashboard">
          <h2>Project data</h2>
           <ul class="info">
-          <li><h3>&diams; Build: ./build/<a href=""></a></h3></li>
-          <li><h3>&diams; Max-size: </h3></li>
-          <li><h3>&diams; Images-files: </h3></li>
-          <li><h3>&diams; Compile Type: </h3></li>
-          <li><h3>&diams; Errors: <?php echo sizeof($errors);?></h3></li>
-
+            <li><a href="./build/<?php echo $_SESSION['entry-point']; ?>">&diams; Build: ./build/<?php echo $_SESSION['entry-point']; ?></a></li>
+          <li>&diams; Max-size: <?php echo $_SESSION['size']; ?></li>
+          <li>&diams; App-size: <?php echo app_size(); ?></li>
+          <li>&diams; Compile Type: <?php echo $_SESSION['compile-type']; ?></li>
+          <li>&diams; Errors: <?php echo sizeof($errors);?></li>
       </ul>
      </div>
    </div>
