@@ -10,6 +10,22 @@
   $errors = array();
   $config = array();
 
+// get configuration file
+   $cfile = 'zyte.config';
+      foreach(file($cfile) as $line){
+           $d1 = str_replace(" ", "", $line);
+           $d2 = str_replace("\n", "", $d1);
+           $d3 = str_replace(";", "", $d2);
+           $d4 = explode(":", $d3);
+           $d5 = str_replace("\r", "", $d4);
+               $config[$d5[0]] = $d5[1];
+      }
+      
+    $_SESSION['project'] = $config['project-name'];  
+    $_SESSION['entry-point'] = $config['entry-point'];
+    $_SESSION['size'] = $config['size'];
+    $_SESSION['compile-type'] = $config['compile-type'];
+
 
   $dir = new DirectoryIterator(dirname(__FILE__));
   foreach ($dir as $fileinfo) {
@@ -23,74 +39,97 @@
     } 
 }
 
-  // if($missing != 0 && $found != sizeof($req)){
-  //       	array_push($errors, "ERROR! dev files are missing!");
-  //       	foreach ($req as $rfiles) {
-  //       	array_push($errors, "ERROR! Missing file: ".$rfiles);
-  //       	}
-  //       }else{
-  //       	compile();
-  //       }
+  if($missing != 0 && $found != sizeof($req)){
+        	array_push($errors, "ERROR! dev files are missing!");
+        	foreach ($req as $rfiles) {
+            if(!file_exists($rfiles)){
+        	array_push($errors, "ERROR! Missing file: ".$rfiles);
+            }
+        	}
+        }else{
+        	compile();
+        }
 
-   compile();
  
 
  function compile(){
-   // get configuration file
-   $cfile = 'zyte.config';
-      foreach(file($cfile) as $line){
-           $d1 = str_replace(" ", "", $line);
-           $d2 = str_replace("\n", "", $d1);
-           $d3 = str_replace(";", "", $d2);
-           $d4 = explode(":", $d3);
-           $d5 = str_replace("\r", "", $d4);
-               $config[$d5[0]] = $d5[1];
-      }
-    $_SESSION['entry-point'] = $config['entry-point'];
-    $_SESSION['size'] = $config['size'];
-    $_SESSION['compile-type'] = $config['compile-type'];
+
      
    
- 	 // if(!is_dir('build')){
- 	 // 	mkdir('build');
- 	 // }
+ 	 if(!is_dir('build')){
+ 	 	mkdir('build');
+ 	 }
 
- 	 // if(is_dir("build")){
- 	 // 	$m = file_get_contents('main.html');
- 	 // 	    $css = '"./src/app.css"';
- 	 // 	    $js = '"./src/app.js"';
- 	 // 	    $rel='"stylesheet"';
- 	 // 	    $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
- 	 // 	    file_put_contents("./build/index.html", $m1);
- 	 // }
+   // html parsing 
+   if($config['compile-type'] == 'html'){
+
+       if(is_dir("build")){
+        $m = file_get_contents('main.html');
+            $css = '"./'.$config['src'].'/app.css"';
+            $js = '"./'.$config['src'].'/app.js"';
+            $rel='"stylesheet"';
+            $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
+            file_put_contents("./build/index.html", $m1);
+     }
  
-   //     $appcss = file_get_contents('app.css');
-   //         if(!is_dir("./build/src")){
-   //           mkdir("./build/src");
-   //         }
-   //         $appcss0 = preg_replace('/\s+/S', " ", $appcss);
+       $appcss = file_get_contents('app.css');
+           if(!is_dir("./build/".$config['src'])){
+             mkdir("./build/".$config['src']);
+           }
+           
+           $appcss0 = preg_replace('/\s+/S', " ", $appcss);
 
-   //         $css_js0 = str_replace("'", '"', $appcss0);
-   //         $css_js1 = "<style>".$css_js0."</style>";
+           $css_js0 = str_replace("'", '"', $appcss0);
+           $css_js1 = "<style>".$css_js0."</style>";
    
-   //     $appjs = file_get_contents('app.js');
-   //         $appbody = file_get_contents('app.html');
-   //         $appbody0 = str_replace("'", "&apos;", $appbody);
-   //         $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
-   //         $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
-   //         $appjs1 = $appbody2.$appjs;    
-   //         file_put_contents("./build/src/app.js", $appjs1);
-   //  $message = "Compile Successfully!";
-    
+       $appjs = file_get_contents('app.js');
+           $appbody = file_get_contents('app.html');
+           $appbody0 = str_replace("'", "&apos;", $appbody);
+           $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
+           $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
+           $appjs1 = $appbody2.$appjs;    
+           file_put_contents("./build/".$config['src']."/app.js", $appjs1);
+    $message = "Compile Successfully!";
+       
+   }
+
+
+   // js parsing
+   if($config['compile-type'] == 'js'){
+ 	 if(is_dir("build")){
+    	 	$m = file_get_contents('main.html');
+    	 	    $css = '"./'.$config['src'].'/app.css"';
+    	 	    $js = '"./'.$config['src'].'/app.js"';
+    	 	    $rel='"stylesheet"';
+    	 	    $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
+    	 	    file_put_contents("./build/".$config['entry-point'], $m1);
+ 	   }
+ 
+       $appcss = file_get_contents('app.css');
+           if(!is_dir("./build/".$config['src'])){
+             mkdir("./build/".$config['src']);
+           }
+           $appcss0 = preg_replace('/\s+/S', " ", $appcss);
+
+           $css_js0 = str_replace("'", '"', $appcss0);
+           $css_js1 = "<style>".$css_js0."</style>";
+   
+       $appjs = file_get_contents('app.js');
+           $appbody = file_get_contents('app.html');
+           $appbody0 = str_replace("'", "&apos;", $appbody);
+           $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
+           $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
+           $appjs1 = $appbody2.$appjs;    
+           file_put_contents("./build/".$config['src']."/app.js", $appjs1);
+    $message = "Compile Successfully!";
+    }
 
   }
       
 ?>
 <html>
 <head>
-	<title>
-		▲ zyte
-	</title>
+	<title>▲ zyte </title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">  
 	<style>
 
@@ -206,14 +245,36 @@
       padding-bottom: 5px;
     }
 
-    .state {
+    .success {
       color: lime !important;
+    }
+
+    .err {
+      color: red !important;
     }
 
 		.toastify{padding:12px 20px;color:#fff;display:inline-block;box-shadow:0 3px 6px -1px rgba(0,0,0,.12),0 10px 36px -4px rgba(77,96,232,.3);background:-webkit-linear-gradient(315deg,#73a5ff,#5477f5);background:linear-gradient(135deg,#73a5ff,#5477f5);position:fixed;opacity:0;transition:all .4s cubic-bezier(.215,.61,.355,1);border-radius:2px;cursor:pointer;text-decoration:none;max-width:calc(50% - 20px);z-index: 9999;}.toastify.on{opacity:1}.toast-close{opacity:.4;padding:0 5px}.right{right:15px}.left{left:15px}.top{top:-150px}.bottom{bottom:-150px}.rounded{border-radius:25px}.avatar{width:1.5em;height:1.5em;margin:0 5px;border-radius:2px}@media only screen and (max-width:360px){.left,.right{margin-left:auto;margin-right:auto;left:0;right:0;max-width:fit-content}}
 	</style>
 </head>
 	<body spellcheck="false">
+    <?php
+    $sp = "display:block";
+     $page = @$_GET['config'];
+         if(!isset($page)){
+              echo '
+                  <style>
+                    html, body {
+                      padding:0px !important;
+                    }
+                  </style>
+                  <iframe src="https://'.$_SESSION['entry-point'].'"></iframe>
+              ';
+             $sp = "display:none";
+         }else{
+            $sp = "display:block";
+         }
+     ?>
+     <div style="<?php echo $sp; ?>" >
      <h1 class="logo">▲<span>zyte</span></h1>
      <hr class="line">
        <br>
@@ -244,8 +305,10 @@
     <div class="col-4"><h3>Console</h3>
      
           <?php
-            $state = "success-text";
-            if(sizeof($errors) !=0){}
+            $state = "success";
+            if(sizeof($errors) !=0){
+              $state = "err";
+            }
             echo '<textarea id="console" class="'.$state.'">';
              if(sizeof($errors) != 0){
                foreach($errors as $err) {
@@ -271,7 +334,7 @@
 
       </ul>
      </div>
-		<!--  <iframe src=""></iframe> -->
+   </div>
 	</body>
 	<script type="text/javascript">
 		!function(t,o){"object"==typeof module&&module.exports?(require("./toastify.css"),module.exports=o()):t.Toastify=o()}(this,function(t){var i=function(t){return new i.lib.init(t)};function r(t,o){return!(!t||"string"!=typeof o)&&!!(t.className&&-1<t.className.trim().split(/\s+/gi).indexOf(o))}return i.lib=i.prototype={toastify:"1.2.2",constructor:i,init:function(t){return t||(t={}),this.options={},this.options.text=t.text||"Hi there!",this.options.duration=t.duration||3e3,this.options.selector=t.selector,this.options.callback=t.callback||function(){},this.options.destination=t.destination,this.options.newWindow=t.newWindow||!1,this.options.close=t.close||!1,this.options.gravity="bottom"==t.gravity?"bottom":"top",this.options.positionLeft=t.positionLeft||!1,this.options.backgroundColor=t.backgroundColor,this.options.avatar=t.avatar||"",this.options.className=t.className||"",this},buildToast:function(){if(!this.options)throw"Toastify is not initialized";var t=document.createElement("div");if(t.className="toastify on "+this.options.className,!0===this.options.positionLeft?t.className+=" left":t.className+=" right",t.className+=" "+this.options.gravity,this.options.backgroundColor&&(t.style.background=this.options.backgroundColor),t.innerHTML=this.options.text,""!==this.options.avatar){var o=document.createElement("img");o.src=this.options.avatar,o.className="avatar",!0===this.options.positionLeft?t.appendChild(o):t.insertAdjacentElement("beforeend",o)}if(!0===this.options.close){var i=document.createElement("span");i.innerHTML="&#10006;",i.className="toast-close",i.addEventListener("click",function(t){t.stopPropagation(),this.removeElement(t.target.parentElement),window.clearTimeout(t.target.parentElement.timeOutValue)}.bind(this));var n=0<window.innerWidth?window.innerWidth:screen.width;!0===this.options.positionLeft&&360<n?t.insertAdjacentElement("afterbegin",i):t.appendChild(i)}return void 0!==this.options.destination&&t.addEventListener("click",function(t){t.stopPropagation(),!0===this.options.newWindow?window.open(this.options.destination,"_blank"):window.location=this.options.destination}.bind(this)),t},showToast:function(){var t,o=this.buildToast();if(!(t=void 0===this.options.selector?document.body:document.getElementById(this.options.selector)))throw"Root element is not defined";return t.insertBefore(o,t.firstChild),i.reposition(),o.timeOutValue=window.setTimeout(function(){this.removeElement(o)}.bind(this),this.options.duration),this},removeElement:function(t){t.className=t.className.replace(" on",""),window.setTimeout(function(){t.parentNode.removeChild(t),this.options.callback.call(t),i.reposition()}.bind(this),400)}},i.reposition=function(){for(var t,o={top:15,bottom:15},i={top:15,bottom:15},n={top:15,bottom:15},e=document.getElementsByClassName("toastify"),s=0;s<e.length;s++){t=!0===r(e[s],"top")?"top":"bottom";var a=e[s].offsetHeight;(0<window.innerWidth?window.innerWidth:screen.width)<=360?(e[s].style[t]=n[t]+"px",n[t]+=a+15):!0===r(e[s],"left")?(e[s].style[t]=o[t]+"px",o[t]+=a+15):(e[s].style[t]=i[t]+"px",i[t]+=a+15)}return this},i.lib.init.prototype=i.lib,i});
