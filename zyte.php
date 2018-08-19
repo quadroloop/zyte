@@ -3,6 +3,14 @@
   // web application copiler
  session_start();
 
+  // update config
+  if(isset($_GET['update'])){
+     $newConfig = $_GET['update'];
+     $config1 = explode(";",$newConfig);
+     $config2 = join(";\n",$config1);
+     file_put_contents('zyte.config', $config2);
+  }
+
   $req = array("app.html","main.html","app.js","app.css","zyte.config");
   $file_missing = array();
   $missing = 0;
@@ -25,6 +33,7 @@
     $_SESSION['entry-point'] = $config['entry-point'];
     $_SESSION['size'] = $config['size'];
     $_SESSION['compile-type'] = $config['compile-type'];
+    $_SESSION['src'] = $config['src'];
 
 
   $dir = new DirectoryIterator(dirname(__FILE__));
@@ -65,7 +74,7 @@
   }
 }
 
-if(app_size() > $config['entry-point']) {
+if(app_size() > $config['size']) {
    array_push($errors, "Error! the App size, is larger than target size");
 }
 
@@ -79,14 +88,13 @@ if(app_size() > $config['entry-point']) {
  	 }
 
    // html parsing 
-   if($config['compile-type'] == 'html'){
+   if($_SESSION["compile-type"] == 'html'){
 
-   //     if(is_dir("build")){
-   // }
+  
  
        $appcss = file_get_contents('app.css');
-           if(!is_dir("./build/".$config['src'])){
-             mkdir("./build/".$config['src']);
+           if(!is_dir("./build/".$_SESSION['src'])){
+             mkdir("./build/".$_SESSION['src']);
            }
 
            $appcss0 = preg_replace('/\s+/S', " ", $appcss);
@@ -102,7 +110,7 @@ if(app_size() > $config['entry-point']) {
             $css0 = str_replace('</head>', $css_js1.'</head>', $m);
             $m1 = str_replace("</body>", "</body>\n<script>".$appjs."</script>",$css0);
             $app_total = str_replace('</div>', $appbody0.'</div>', $m1);
-            file_put_contents("./build/".$config['entry-point'], $app_total);
+            file_put_contents("./build/".$_SESSION['entry-point'], $app_total);
                
     $message = "Compile Successfully!";
        
@@ -110,19 +118,19 @@ if(app_size() > $config['entry-point']) {
 
 
    // js parsing
-   if($config['compile-type'] == 'js'){
+   if($_SESSION['compile-type'] == 'js'){
  	 if(is_dir("build")){
     	 	$m = file_get_contents('main.html');
-    	 	    $css = '"./'.$config['src'].'/app.css"';
-    	 	    $js = '"./'.$config['src'].'/app.js"';
+    	 	    $css = '"./'.$_SESSION['src'].'/app.css"';
+    	 	    $js = '"./'.$_SESSION['src'].'/app.js"';
     	 	    $rel='"stylesheet"';
     	 	    $m1 = str_replace("</body>", "</body>\n<script src=".$js."></script>", $m);
-    	 	    file_put_contents("./build/".$config['entry-point'], $m1);
+    	 	    file_put_contents("./build/".$_SESSION['entry-point'], $m1);
  	   }
  
        $appcss = file_get_contents('app.css');
-           if(!is_dir("./build/".$config['src'])){
-             mkdir("./build/".$config['src']);
+           if(!is_dir("./build/".$_SESSION['src'])){
+             mkdir("./build/".$_SESSION['src']);
            }
            $appcss0 = preg_replace('/\s+/S', " ", $appcss);
 
@@ -135,7 +143,7 @@ if(app_size() > $config['entry-point']) {
            $appbody1 = preg_replace('/\s+/S', " ", $appbody0);
            $appbody2 = "document.getElementById('index').innerHTML ='".$css_js1.$appbody1."';";
            $appjs1 = $appbody2.$appjs;    
-           file_put_contents("./build/".$config['src']."/app.js", $appjs1);
+           file_put_contents("./build/".$_SESSION['src']."/app.js", $appjs1);
     $message = "Compile Successfully!";
     }
 
@@ -282,7 +290,7 @@ if(app_size() > $config['entry-point']) {
                       padding:0px !important;
                     }
                   </style>
-                  <iframe src="https://'.$_SESSION['entry-point'].'"></iframe>
+                  <iframe src="./build/'.$_SESSION['entry-point'].'"></iframe>
               ';
              $sp = "display:none";
          }else{
@@ -380,6 +388,11 @@ if(app_size() > $config['entry-point']) {
   }
 
  function updateConfig(){
+    var config = document.getElementById("config").value;
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "zyte.php?update="+config, false ); 
+    xmlHttp.send( null );
+
     Toastify({
       text: "▲ Configuration updated!",
       duration: 3000,
@@ -406,8 +419,8 @@ if(app_size() > $config['entry-point']) {
     }
   }else{
     // no errors
-    $m = '"'.$message.'"';
-    echo 'setTimeout("error('.$m.')",200);';
+    $m = "'Compile Complete!'";
+    echo 'setTimeout("status('.$m.')",200);';
   }
   echo '</script>';
 ?>
