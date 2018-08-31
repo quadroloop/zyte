@@ -277,6 +277,15 @@ if(app_size() > $config['size']) {
     }
 
 		.toastify{padding:12px 20px;color:#fff;display:inline-block;box-shadow:0 3px 6px -1px rgba(0,0,0,.12),0 10px 36px -4px rgba(77,96,232,.3);background:-webkit-linear-gradient(315deg,#73a5ff,#5477f5);background:linear-gradient(135deg,#73a5ff,#5477f5);position:fixed;opacity:0;transition:all .4s cubic-bezier(.215,.61,.355,1);border-radius:2px;cursor:pointer;text-decoration:none;max-width:calc(50% - 20px);z-index: 9999;}.toastify.on{opacity:1}.toast-close{opacity:.4;padding:0 5px}.right{right:15px}.left{left:15px}.top{top:-150px}.bottom{bottom:-150px}.rounded{border-radius:25px}.avatar{width:1.5em;height:1.5em;margin:0 5px;border-radius:2px}@media only screen and (max-width:360px){.left,.right{margin-left:auto;margin-right:auto;left:0;right:0;max-width:fit-content}}
+
+    .compile {
+      padding: 10px;
+      border: 0;
+      border-radius: 3px;
+      background-color: #333;
+      color: #fff;
+      text-transform: uppercase;
+    }
 	</style>
 </head>
 	<body spellcheck="false">
@@ -311,8 +320,8 @@ if(app_size() > $config['size']) {
           <li>&diams; App-size: <?php echo app_size(); ?></li>
           <li>&diams; Compile Type: <?php echo $_SESSION['compile-type']; ?></li>
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
-
       </ul>
+        <button class="compile" onclick="window.location.reload();">Compile App</button>
     </div>
 
     <div class="col-4"><h3>Config <button class="btn" onclick="updateConfig();">Update</button></h3>
