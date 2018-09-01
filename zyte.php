@@ -286,6 +286,7 @@ if(app_size() > $config['size']) {
       color: #fff;
       text-transform: uppercase;
       margin-bottom: 10px;
+      cursor: pointer;
     }
 
     .settings {
@@ -308,6 +309,7 @@ if(app_size() > $config['size']) {
     .settings:hover {
       color: #fff;
       width: 180px; 
+      box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
       transition: 0.6s;
     }
 
@@ -317,7 +319,7 @@ if(app_size() > $config['size']) {
     <?php
     $sp = "display:block";
      $page = @$_GET['config'];
-         if(!isset($page)){
+         if(!isset($page) && sizeof($errors) == 0){
               echo '
                   <style>
                     html, body {
