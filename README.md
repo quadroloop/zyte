@@ -3,13 +3,23 @@
 
 ### How to use PHP parser:
 
-- you need the following files in a relative directory with *zyte.php*
+- you need the following files in a relative directory with __zyte.php__
 
-> *zyte.config* - configuration file
-> *main.html* - html, head, meta settings, body go here.
-> *app.css* - all the CSS for the web app
-> *app.js* - all Javascript for the web app
+- __zyte.config__ - configuration file
+- __main.html__ - html, head, meta settings, body go here.
+- __app.css__ - all the CSS for the web app
+- __app.js__ - all Javascript for the web app
 
+> #### zyte.config
+```json
+project-name: Sample App;
+entry-point: index.html;
+size: 8000;
+src: src;
+compile-type: js;
+```
+> compile types, __js__ allows all the html and css to be rendered in Javascript
+> while __html__ just allows you to compress everything in a single html file.
 
 ### Project status:
 - PHP Parser complete, 
