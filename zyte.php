@@ -285,6 +285,7 @@ if(app_size() > $config['size']) {
       background-color: #333;
       color: #fff;
       text-transform: uppercase;
+      margin-bottom: 10px;
     }
 	</style>
 </head>
@@ -322,6 +323,8 @@ if(app_size() > $config['size']) {
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
       </ul>
         <button class="compile" onclick="window.location.reload();">Compile App</button>
+        <button class="compile" onclick="window.location='zyte.php'">Preview App</button>
+
     </div>
 
     <div class="col-4"><h3>Config <button class="btn" onclick="updateConfig();">Update</button></h3>
@@ -365,6 +368,9 @@ if(app_size() > $config['size']) {
           <li>&diams; Compile Type: <?php echo $_SESSION['compile-type']; ?></li>
           <li>&diams; Errors: <?php echo sizeof($errors);?></li>
       </ul>
+      <br>
+      <button class="compile" onclick="window.location.reload();">Compile App</button>
+        <button class="compile" onclick="window.location='zyte.php'">Preview App</button>
      </div>
    </div>
 	</body>
