@@ -1,5 +1,5 @@
 # zyte
-> A lightweight that parses and builds a Javascript based web application with a limited file size. 
+> A lightweight application that parses and builds a Javascript based web application with a limited file size. 
 
 ### Project status:
 - PHP Parser complete, 
