@@ -23,7 +23,4 @@ compile-type: js;
 
 ### Project status:
 - PHP Parser complete, 
-- Python script compiler, still a work in progress
-
-
-
+- Python script compiler, still a work in progress 
