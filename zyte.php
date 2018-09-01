@@ -287,6 +287,30 @@ if(app_size() > $config['size']) {
       text-transform: uppercase;
       margin-bottom: 10px;
     }
+
+    .settings {
+       position: fixed;
+       z-index: 9999;
+       border: 0;
+       border-radius: 10px;
+       width: 150px;
+       height: 40px;
+       background-color: rgba(0,0,0,0.3);
+       padding: 10px;
+       bottom: 45px;
+       right: -120px;
+       color: rgba(255,255,255,0.3);
+       font-size: 35px;
+       cursor: pointer;
+       transition: 0.6s;
+    }
+
+    .settings:hover {
+      color: #fff;
+      width: 180px; 
+      transition: 0.6s;
+    }
+
 	</style>
 </head>
 	<body spellcheck="false">
@@ -300,6 +324,7 @@ if(app_size() > $config['size']) {
                       padding:0px !important;
                     }
                   </style>
+                       <a href="zyte.php?config"><div class="settings">▲</div></a>
                   <iframe src="./build/'.$_SESSION['entry-point'].'"></iframe>
               ';
              $sp = "display:none";
